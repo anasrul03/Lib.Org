@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lib_org/Firebase_Auth/Login_Page.dart';
 import 'package:lib_org/Pages/BookDetails_Page.dart';
+import 'package:lib_org/main.dart';
 
 class NavigateDummy extends StatelessWidget {
   const NavigateDummy({super.key});
@@ -17,8 +18,10 @@ class NavigateDummy extends StatelessWidget {
           children: [
             ElevatedButton(
                 onPressed: () {
-                  Navigator.of(context).push(
-                      MaterialPageRoute(builder: ((context) => LoginPage())));
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: ((context) => MyHomePage(
+                            title: 'home',
+                          ))));
                 },
                 child: Text("LoginPage")),
             ElevatedButton(
