@@ -10,13 +10,15 @@ class Authentication extends StatefulWidget {
 }
 
 class _AuthenticationState extends State<Authentication> {
-  bool isLogged = true;
+  bool isLogged = true; // change to true if u want to start at login page
   @override
   Widget build(BuildContext context) => isLogged
       ? LoginPage(
           toSignUpPage: toggle,
         )
-      : SignUpPage();
+      : SignUpPage(
+          toLoginPage: toggle,
+        );
 
   void toggle() => setState(() => isLogged = !isLogged);
 }
