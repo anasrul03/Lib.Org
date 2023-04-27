@@ -1,9 +1,13 @@
-// ignore_for_file: prefer_const_constructors, sort_child_properties_last
-
+// ignore_for_file: prefer_const_constructors, sort_child_properties_last, unused_field, prefer_interpolation_to_compose_strings, use_build_context_synchronously, avoid_print
+import 'package:email_validator/email_validator.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:lib_org/main.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+  VoidCallback? toSignUpPage;
+  LoginPage({super.key, this.toSignUpPage});
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -11,11 +15,21 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   bool _passwordVisible = false;
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     _passwordVisible = true;
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
   }
 
   @override
@@ -33,34 +47,67 @@ class _LoginPageState extends State<LoginPage> {
           child: Container(
             padding: EdgeInsets.all(15),
             child: Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
                 const Text("Login Page"),
-                const TextField(
-                  decoration: InputDecoration(
-                      border: OutlineInputBorder(), hintText: "Email"),
+                Material(
+                  elevation: 10.0,
+                  borderRadius: BorderRadius.circular(15.0),
+                  shadowColor: Color(0x55434343),
+                  child: TextFormField(
+                    controller: _emailController,
+                    decoration: InputDecoration(
+                        border: OutlineInputBorder(), hintText: "Email"),
+                  ),
                 ),
-                TextField(
-                  obscureText: _passwordVisible,
-                  decoration: InputDecoration(
-                      suffixIcon: IconButton(
-                          onPressed: () {
-                            setState(() {
-                              _passwordVisible = !_passwordVisible;
-                            });
-                          },
-                          icon: Icon(_passwordVisible
-                              ? Icons.visibility
-                              : Icons.visibility_off)),
-                      border: OutlineInputBorder(),
-                      hintText: "Password"),
+                Material(
+                  elevation: 10.0,
+                  borderRadius: BorderRadius.circular(15.0),
+                  shadowColor: Color(0x55434343),
+                  child: TextFormField(
+                    validator: (email) =>
+                        email != null && !EmailValidator.validate(email)
+                            ? 'Enter a valid email!'
+                            : null,
+                    controller: _passwordController,
+                    obscureText: _passwordVisible,
+                    decoration: InputDecoration(
+                        suffixIcon: IconButton(
+                            onPressed: () {
+                              setState(() {
+                                _passwordVisible = !_passwordVisible;
+                              });
+                            },
+                            icon: Icon(_passwordVisible
+                                ? Icons.visibility
+                                : Icons.visibility_off)),
+                        border: OutlineInputBorder(),
+                        hintText: "Password"),
+                  ),
+                ),
+                RichText(
+                  text: TextSpan(
+                      text: "No Account? ",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                      ),
+                      children: [
+                        TextSpan(
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = widget.toSignUpPage,
+                            text: 'Sign Up',
+                            style: TextStyle(
+                                decoration: TextDecoration.underline,
+                                color: Colors.blue[200]))
+                      ]),
                 ),
                 SizedBox(
                   width: 200,
                   child: ElevatedButton(
                       autofocus: true,
-                      onPressed: () {},
+                      onPressed: logIn,
                       child: Text("Login"),
                       style: ElevatedButton.styleFrom(
                         //border width and color
@@ -69,12 +116,38 @@ class _LoginPageState extends State<LoginPage> {
                             //to set border radius to button
                             borderRadius: BorderRadius.circular(13)),
                       )),
-                )
+                ),
               ],
             ),
           ),
         ),
       ),
     );
+  }
+
+  Future logIn() async {
+    // if (isLoading == true) {
+
+    // }
+    print(_emailController.text.trim());
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+      );
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        backgroundColor: Colors.green,
+        content: Text("Successfully Logged as " + _emailController.text.trim()),
+        duration: Duration(seconds: 1),
+      ));
+    } catch (e) {
+      print("ERROR: $e");
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        backgroundColor: Colors.red,
+        content: Text("Please input a correct email and password !!"),
+        duration: Duration(seconds: 3),
+      ));
+    }
+    navigatorKey.currentState!.popUntil((route) => route.isFirst);
   }
 }
