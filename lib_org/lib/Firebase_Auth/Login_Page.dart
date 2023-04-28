@@ -3,7 +3,12 @@ import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_signin_button/flutter_signin_button.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:lib_org/main.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+
+import '../cubit/auth_cubit.dart';
 
 class LoginPage extends StatefulWidget {
   VoidCallback? toSignUpPage;
@@ -17,6 +22,8 @@ class _LoginPageState extends State<LoginPage> {
   bool _passwordVisible = false;
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final AuthRepo _authCubit = AuthRepo();
+
   @override
   void initState() {
     // TODO: implement initState
@@ -127,6 +134,31 @@ class _LoginPageState extends State<LoginPage> {
                             borderRadius: BorderRadius.circular(13)),
                       )),
                 ),
+                SizedBox(
+                    width: 200,
+                    child: SignInButton(
+                      Buttons.Google,
+                      onPressed: () async {
+                        try {
+                          final UserCredential userCredential =
+                              await signInWithGoogle();
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              backgroundColor: Colors.green,
+                              content: Text(
+                                  "Logged using google ${userCredential.user?.displayName}"),
+                              duration: Duration(seconds: 1)));
+                          // Successfully signed in
+                        } catch (e) {
+                          print("YOUR ERROR IS $e");
+                          // Error signing in
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              backgroundColor: Colors.black,
+                              content: Text("Cancelled : $e"),
+                              duration: Duration(seconds: 5)));
+                          // Successfully
+                        }
+                      },
+                    )),
               ],
             ),
           ),
@@ -173,9 +205,34 @@ class _LoginPageState extends State<LoginPage> {
       print("ERROR: $e");
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         backgroundColor: Colors.red,
-        content: Text("Cannot Log!"),
+        content: Text("Cannot Log! Anon : $e"),
         duration: Duration(seconds: 3),
       ));
     }
+  }
+
+  Future<UserCredential> signInWithGoogle() async {
+    // Trigger the authentication flow
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+    // Obtain the auth details from the request
+    final GoogleSignInAuthentication? googleAuth =
+        await googleUser?.authentication;
+
+    // Create a new credential
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth?.accessToken,
+      idToken: googleAuth?.idToken,
+    );
+
+    // Once signed in, return the UserCredential
+    return await FirebaseAuth.instance.signInWithCredential(credential);
+  }
+
+  Future<UserCredential> signInWithGitHub() async {
+    // Create a new provider
+    GithubAuthProvider githubProvider = GithubAuthProvider();
+
+    return await FirebaseAuth.instance.signInWithProvider(githubProvider);
   }
 }
