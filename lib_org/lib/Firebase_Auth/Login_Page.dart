@@ -66,10 +66,6 @@ class _LoginPageState extends State<LoginPage> {
                   borderRadius: BorderRadius.circular(15.0),
                   shadowColor: Color(0x55434343),
                   child: TextFormField(
-                    validator: (email) =>
-                        email != null && !EmailValidator.validate(email)
-                            ? 'Enter a valid email!'
-                            : null,
                     controller: _passwordController,
                     obscureText: _passwordVisible,
                     decoration: InputDecoration(
@@ -117,6 +113,20 @@ class _LoginPageState extends State<LoginPage> {
                             borderRadius: BorderRadius.circular(13)),
                       )),
                 ),
+                SizedBox(
+                  width: 200,
+                  child: ElevatedButton(
+                      autofocus: true,
+                      onPressed: anon,
+                      child: Text("Anonymous"),
+                      style: ElevatedButton.styleFrom(
+                        //border width and color
+                        elevation: 2, //elevation of button
+                        shape: RoundedRectangleBorder(
+                            //to set border radius to button
+                            borderRadius: BorderRadius.circular(13)),
+                      )),
+                ),
               ],
             ),
           ),
@@ -129,7 +139,7 @@ class _LoginPageState extends State<LoginPage> {
     // if (isLoading == true) {
 
     // }
-    print(_emailController.text.trim());
+    // print(_emailController.text.trim());
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: _emailController.text.trim(),
@@ -149,5 +159,23 @@ class _LoginPageState extends State<LoginPage> {
       ));
     }
     navigatorKey.currentState!.popUntil((route) => route.isFirst);
+  }
+
+  Future anon() async {
+    try {
+      await FirebaseAuth.instance.signInAnonymously();
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        backgroundColor: Colors.green,
+        content: Text("Logged Anonymously"),
+        duration: Duration(seconds: 1),
+      ));
+    } catch (e) {
+      print("ERROR: $e");
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        backgroundColor: Colors.red,
+        content: Text("Cannot Log!"),
+        duration: Duration(seconds: 3),
+      ));
+    }
   }
 }

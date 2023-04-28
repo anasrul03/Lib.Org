@@ -73,6 +73,8 @@ class _MyHomePageState extends State<MyHomePage> {
             return HomePage();
           } else {
             print("Re-directing to AuthPage");
+            double width = MediaQuery.of(context).size.width;
+            print("the width is $width");
             return Authentication();
           }
         },
