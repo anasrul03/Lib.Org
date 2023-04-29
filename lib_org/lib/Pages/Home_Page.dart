@@ -2,7 +2,9 @@
 
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:lib_org/Pages/Barcode_Page.dart';
 import 'package:lib_org/Pages/LibrarySetting_Page.dart';
+import 'package:lib_org/Pages/Main_Page.dart';
 import 'package:lib_org/main.dart';
 
 class HomePage extends StatefulWidget {
@@ -14,16 +16,12 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
-  static const List<Widget> _widgetOptions = <Widget>[
-    Text(
-      'MainPage',
-    ),
+  static final List<Widget> _widgetOptions = <Widget>[
+    HomeWidget(),
     Text(
       'Index 1: Business',
     ),
-    Text(
-      'Index 2: School',
-    ),
+    BarcodePage(),
     Text(
       'Index 3: School',
     ),

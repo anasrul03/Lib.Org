@@ -1,65 +1,54 @@
 import 'dart:convert';
-import 'package:bloc/bloc.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 
-String APIKey = 'AIzaSyD-LCZdBsMhtcGdBkKMR0wK3ZXEy9KJ11M';
+String apiKey = dotenv.env['API_KEY']!;
 
-class ItemsCubit extends Cubit<List<Items>> {
-  ItemsCubit() : super([]);
+List<String> genres = [
+  "fiction",
+  "architecture",
+  "music",
+  "body+mind+&+spirit",
+  "computers",
+  "history",
+  "humor",
+];
 
-  void setItems(List<Items> items) => emit(items);
-
-  Future<void> fetchBookData(String isbn, ItemsCubit itemsCubit) async {
+class BookListService {
+  Future<ApiBookList> fetchBookList() async {
     final response = await http.get(
       Uri.parse(
-          'https://www.googleapis.com/books/v1/volumes?q=isbn:$isbn&key=$APIKey'),
+          'https://www.googleapis.com/books/v1/volumes?q=subject:fiction&maxResults=18&key=$apiKey'),
     );
 
-    if (response.statusCode == 200 || response.statusCode == 201) {
+    if (response.statusCode == 200) {
       print(response.statusCode);
       print(response.body);
-      final data = jsonDecode(response.body);
-      if (data['totalItems'] > 0) {
-        final apiService = ApiService.fromJson(data, itemsCubit);
-      }
+      return ApiBookList.fromJson(response.body);
     } else {
       print(response.statusCode);
       print(response.body);
+      throw Exception('Error, try again');
     }
   }
 }
 
-abstract class BookState {}
-
-class BookStateInitial extends BookState {}
-
-class BookStateLoading extends BookState {}
-
-class BookStateError extends BookState {}
-
-class BookStateLoaded extends BookState {
-  BookStateLoaded(this.title);
-
-  final String title;
-}
-
-class ApiService {
-  ApiService({
-    required this.itemsCubit,
+class ApiBookList {
+  ApiBookList({
+    required this.items,
   });
+  late final List<Items> items;
 
-  late final ItemsCubit itemsCubit;
+  factory ApiBookList.fromJson(String str) =>
+      ApiBookList.fromMap(json.decode(str));
 
-  ApiService.fromJson(Map<String, dynamic> json, ItemsCubit itemsCubit) {
-    final items =
-        List.from(json['items']).map((e) => Items.fromJson(e)).toList();
-    itemsCubit.setItems(items);
-    this.itemsCubit = itemsCubit;
+  ApiBookList.fromMap(Map<String, dynamic> json) {
+    items = List.from(json['items']).map((e) => Items.fromJson(e)).toList();
   }
 
   Map<String, dynamic> toJson() {
     final _data = <String, dynamic>{};
-    _data['items'] = itemsCubit.state.map((e) => e.toJson()).toList();
+    _data['items'] = items.map((e) => e.toJson()).toList();
     return _data;
   }
 }
@@ -93,9 +82,7 @@ class VolumeInfo {
     required this.publishedDate,
     required this.description,
     required this.industryIdentifiers,
-    required this.pageCount,
     required this.categories,
-    required this.averageRating,
     required this.maturityRating,
     required this.imageLinks,
     required this.language,
@@ -106,9 +93,7 @@ class VolumeInfo {
   late final String publishedDate;
   late final String description;
   late final List<IndustryIdentifiers> industryIdentifiers;
-  late final int pageCount;
   late final List<String> categories;
-  late final int averageRating;
   late final String maturityRating;
   late final ImageLinks imageLinks;
   late final String language;
@@ -122,9 +107,7 @@ class VolumeInfo {
     industryIdentifiers = List.from(json['industryIdentifiers'])
         .map((e) => IndustryIdentifiers.fromJson(e))
         .toList();
-    pageCount = json['pageCount'];
     categories = List.castFrom<dynamic, String>(json['categories']);
-    averageRating = json['averageRating'];
     maturityRating = json['maturityRating'];
     imageLinks = ImageLinks.fromJson(json['imageLinks']);
     language = json['language'];
@@ -139,9 +122,7 @@ class VolumeInfo {
     _data['description'] = description;
     _data['industryIdentifiers'] =
         industryIdentifiers.map((e) => e.toJson()).toList();
-    _data['pageCount'] = pageCount;
     _data['categories'] = categories;
-    _data['averageRating'] = averageRating;
     _data['maturityRating'] = maturityRating;
     _data['imageLinks'] = imageLinks.toJson();
     _data['language'] = language;
