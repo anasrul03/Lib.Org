@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -55,7 +56,6 @@ class BarcodePageState extends State<BarcodePage> {
     });
 
     if (barcodeScanRes != '-1') {
-      // navigate to BookDetailsPage and fetch book data
       await navigateToBookDetailsPage(barcodeScanRes);
     }
   }
@@ -67,9 +67,11 @@ class BarcodePageState extends State<BarcodePage> {
           child: Column(
         children: [
           const Spacer(),
-          Image.network(
-              'https://media.tenor.com/8E3SIU76kHgAAAAC/barcode-scan.gif'),
+          CachedNetworkImage(
+              imageUrl:
+                  'https://media.tenor.com/8E3SIU76kHgAAAAC/barcode-scan.gif'),
           ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.indigo),
             onPressed: _scanBarcode,
             child: const Text('Start Barcode scan'),
           ),

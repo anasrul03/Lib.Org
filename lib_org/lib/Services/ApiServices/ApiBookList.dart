@@ -4,21 +4,76 @@ import 'package:http/http.dart' as http;
 
 String apiKey = dotenv.env['API_KEY']!;
 
-List<String> genres = [
+List<String> genre = [
   "fiction",
   "architecture",
   "music",
-  "body+mind+&+spirit",
   "computers",
   "history",
   "humor",
 ];
 
+//   List<String> genre = [
+//     "antiques+&+collectibles",
+//     "literary+collections",
+//     "architecture",
+//     "literary+criticism",
+//     "art",
+//     "mathematics",
+//     "bibles",
+//     "medical",
+//     "biography+&+autobiography",
+//     "music",
+//     "body+mind+&+spirit",
+//     "nature",
+//     "business+&+economics",
+//     "performing+arts",
+//     "comics+&+graphic+novels",
+//     "pets",
+//     "computers",
+//     "philosophy",
+//     "cooking",
+//     "photography",
+//     "crafts+&+hobbies",
+//     "poetry",
+//     "design",
+//     "political+science",
+//     "drama",
+//     "psychology",
+//     "education",
+//     "reference",
+//     "family+&+relationships",
+//     "religion",
+//     "fiction",
+//     "science",
+//     "foreign+language+study",
+//     "self-help",
+//     "games+&+activities",
+//     "social+science",
+//     "gardening",
+//     "sports+&+recreation",
+//     "health+&+fitness",
+//     "study+aids",
+//     "history",
+//     "technology+&+engineering",
+//     "house+&+home",
+//     "transportation",
+//     "humor",
+//     "travel",
+//     "juvenile+fiction",
+//     "true+crime",
+//     "juvenile+nonfiction",
+//     "young+adult+fiction",
+//     "language+arts+&+disciplines",
+//     "young+adult+nonfiction",
+//     "law",
+//   ];
+
 class BookListService {
-  Future<ApiBookList> fetchBookList() async {
+  Future<ApiBookList> fetchBookList(String genre) async {
     final response = await http.get(
       Uri.parse(
-          'https://www.googleapis.com/books/v1/volumes?q=subject:fiction&maxResults=18&key=$apiKey'),
+          'https://www.googleapis.com/books/v1/volumes?q=subject:$genre&maxResults=18&key=$apiKey'),
     );
 
     if (response.statusCode == 200) {

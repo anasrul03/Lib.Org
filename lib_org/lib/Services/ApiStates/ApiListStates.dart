@@ -23,12 +23,13 @@ class BookListError extends BookListStates {
 class BookListCubit extends Cubit<BookListStates> {
   BookListCubit() : super(BookListLoading());
 
-  Future<void> fetchBookList() async {
+  Future<void> fetchBookList([String? genre]) async {
     BookListService bookListService = BookListService();
     emit(BookListLoading());
 
     try {
-      ApiBookList apiBookList = await bookListService.fetchBookList();
+      ApiBookList apiBookList =
+          await bookListService.fetchBookList(genre ?? 'fiction');
 
       emit(BookListLoaded(apiBookList: apiBookList));
     } catch (e) {
