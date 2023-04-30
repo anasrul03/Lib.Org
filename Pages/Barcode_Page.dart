@@ -72,6 +72,10 @@ class BarcodePageState extends State<BarcodePage> {
             onPressed: _scanBarcode,
             child: const Text('Start Barcode scan'),
           ),
+          const ElevatedButton(
+            onPressed: null,
+            child: Text('Search ISBN No.'),
+          ),
           const Spacer()
         ],
       )),
