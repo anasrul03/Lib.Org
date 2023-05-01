@@ -11,7 +11,8 @@ part 'auth_state.dart';
 class AuthRepo {
   // AuthRepo() : super(Null);
 
-  Future signUp(context, String email, String password) async {
+  Future signUp(BuildContext context, String email, String password) async {
+    print("Running Firebase Create user");
     try {
       final createUser = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: email, password: password);

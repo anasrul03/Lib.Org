@@ -3,10 +3,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lib_org/Components/navigationDummy.dart';
 import 'package:lib_org/Firebase_Auth/Login_Page.dart';
 import 'package:lib_org/Pages/Home_Page.dart';
 import 'package:lib_org/Services/Firebase_Auth.dart';
+import 'package:lib_org/cubit/auth_cubit.dart';
+import 'package:lib_org/cubit/signup_cubit.dart';
 import 'package:lib_org/firebase_options.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -27,11 +30,18 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(primaryColor: Colors.indigo),
-      title: 'Flutter Demo',
-      home: const NavigateDummy(),
+    return MultiRepositoryProvider(
+      providers: [
+        RepositoryProvider(
+          create: (context) => AuthRepo(),
+        ),
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(primaryColor: Colors.indigo),
+        title: 'Flutter Demo',
+        home: NavigateDummy(),
+      ),
     );
   }
 }
