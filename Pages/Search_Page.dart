@@ -61,31 +61,39 @@ class BookSearchPageState extends State<BookSearchPage> {
           },
         ),
       ),
-      body: ListView.builder(
-        itemCount: _searchResults.length,
-        itemBuilder: (BuildContext context, int index) {
-          Map<String, dynamic> book = _searchResults[index]['volumeInfo'];
-          return Padding(
+      body: Column(
+        children: [
+          Padding(
             padding: const EdgeInsets.all(8.0),
-            child: InkWell(
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => BookDetailsPage(
-                        isbn: book['industryIdentifiers'][0]['identifier'],
-                      ),
-                    ));
-              },
-              child: ListTile(
-                leading: book['imageLinks'] != null
-                    ? Image.network(book['imageLinks']['thumbnail'])
-                    : Container(),
-                title: Text(book['title'] ?? ''),
-              ),
-            ),
-          );
-        },
+            child: Text('Showing results for $_searchTerm'),
+          ),
+          ListView.builder(
+            itemCount: _searchResults.length,
+            itemBuilder: (BuildContext context, int index) {
+              Map<String, dynamic> book = _searchResults[index]['volumeInfo'];
+              return Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: InkWell(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => BookDetailsPage(
+                            isbn: book['industryIdentifiers'][0]['identifier'],
+                          ),
+                        ));
+                  },
+                  child: ListTile(
+                    leading: book['imageLinks'] != null
+                        ? Image.network(book['imageLinks']['thumbnail'])
+                        : Container(),
+                    title: Text(book['title'] ?? ''),
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
       ),
     );
   }
