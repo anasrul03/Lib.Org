@@ -7,6 +7,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lib_org/Components/navigationDummy.dart';
 import 'package:lib_org/Firebase_Auth/Login_Page.dart';
 import 'package:lib_org/Pages/Home_Page.dart';
+import 'package:lib_org/Services/ApiServices/ApiService.dart';
+import 'package:lib_org/Services/ApiStates/ApiListStates.dart';
 import 'package:lib_org/Services/Firebase_Auth.dart';
 import 'package:lib_org/cubit/auth_cubit.dart';
 import 'package:lib_org/cubit/signup_cubit.dart';
@@ -14,8 +16,10 @@ import 'package:lib_org/firebase_options.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 Future main() async {
+  await dotenv.load(fileName: "lib/API_KEY.env");
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
@@ -30,17 +34,29 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MultiRepositoryProvider(
+  return MultiBlocProvider(
       providers: [
-        RepositoryProvider(
-          create: (context) => AuthRepo(),
+      BlocProvider(
+          create: (BuildContext context) {
+            return AuthRepo();
+          },
+        ),
+        BlocProvider(
+          create: (BuildContext context) {
+            return BookListCubit();
+          },
+        ),
+        BlocProvider(
+          create: (BuildContext context) {
+            return BookDetailsCubit();
+          },
         ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeData(primaryColor: Colors.indigo),
         title: 'Flutter Demo',
-        home: NavigateDummy(),
+        home: const HomePage(),
       ),
     );
   }

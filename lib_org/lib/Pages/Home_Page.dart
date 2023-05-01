@@ -2,7 +2,11 @@
 
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:lib_org/Pages/Barcode_Page.dart';
 import 'package:lib_org/Pages/LibrarySetting_Page.dart';
+import 'package:lib_org/Pages/Library_Page.dart';
+import 'package:lib_org/Pages/Main_Page.dart';
+import 'package:lib_org/Pages/Search_Page.dart';
 import 'package:lib_org/main.dart';
 
 class HomePage extends StatefulWidget {
@@ -14,19 +18,11 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
-  static const List<Widget> _widgetOptions = <Widget>[
-    Text(
-      'MainPage',
-    ),
-    Text(
-      'Index 1: Business',
-    ),
-    Text(
-      'Index 2: School',
-    ),
-    Text(
-      'Index 3: School',
-    ),
+  static final List<Widget> _widgetOptions = <Widget>[
+    HomeWidget(),
+    LibraryPage(),
+    BarcodePage(),
+    BookSearchPage(),
     SettingPage(),
   ];
   @override
@@ -58,7 +54,7 @@ class _HomePageState extends State<HomePage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: const [
               Icon(
-                Icons.book,
+                Icons.menu_book,
                 size: 30,
                 color: Colors.white,
               ),
@@ -72,7 +68,7 @@ class _HomePageState extends State<HomePage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: const [
               Icon(
-                Icons.barcode_reader,
+                Icons.qr_code,
                 size: 30,
                 color: Colors.white,
               ),
