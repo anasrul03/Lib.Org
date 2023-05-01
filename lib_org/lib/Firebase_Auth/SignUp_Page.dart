@@ -39,7 +39,7 @@ class _SignUpWidgetState extends State<SignUpWidget> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<SignupCubit, SignupState>(
-      builder: (context, state) {
+      builder: (BuildContext context, state) {
         return Scaffold(
           backgroundColor: Colors.indigo,
           body: Container(
@@ -89,7 +89,10 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                           }
                           return null;
                         },
-                        onChanged: (value) {},
+                        onChanged: (value) {
+                          context.read<SignupCubit>().passwordChanged(value);
+                          print(state.password);
+                        },
                         decoration: InputDecoration(
                             prefixIcon: Icon(Icons.lock),
                             border: OutlineInputBorder(),
@@ -100,7 +103,11 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                       width: 200,
                       child: ElevatedButton(
                           autofocus: true,
-                          onPressed: () {},
+                          onPressed: () {
+                            context
+                                .read<SignupCubit>()
+                                .signupWithCredentials(context);
+                          },
                           child: Text("Sign Up"),
                           style: ElevatedButton.styleFrom(
                             //border width and color
