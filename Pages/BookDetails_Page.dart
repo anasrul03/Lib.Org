@@ -33,6 +33,7 @@ class BookDetailsState extends State<BookDetailsPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Book Details'),
+        backgroundColor: Colors.indigo,
       ),
       body: BlocBuilder<BookDetailsCubit, BookDetailsStates>(
           bloc: cubit,

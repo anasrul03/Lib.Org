@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'package:lib_org/Pages/BookDetails_Page.dart';
+
 class BookSearchPage extends StatefulWidget {
   const BookSearchPage({super.key});
 
@@ -44,7 +46,7 @@ class BookSearchPageState extends State<BookSearchPage> {
           controller: _searchController,
           decoration: const InputDecoration(
             hintText: 'Search Books...',
-            hintStyle: TextStyle(color: Colors.white70),
+            hintStyle: TextStyle(color: Colors.white),
           ),
           onChanged: (String value) {
             setState(() {
@@ -63,11 +65,25 @@ class BookSearchPageState extends State<BookSearchPage> {
         itemCount: _searchResults.length,
         itemBuilder: (BuildContext context, int index) {
           Map<String, dynamic> book = _searchResults[index]['volumeInfo'];
-          return ListTile(
-            leading: book['imageLinks'] != null
-                ? Image.network(book['imageLinks']['thumbnail'])
-                : Container(),
-            title: Text(book['title'] ?? ''),
+          return Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: InkWell(
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => BookDetailsPage(
+                        isbn: book['industryIdentifiers'][0]['identifier'],
+                      ),
+                    ));
+              },
+              child: ListTile(
+                leading: book['imageLinks'] != null
+                    ? Image.network(book['imageLinks']['thumbnail'])
+                    : Container(),
+                title: Text(book['title'] ?? ''),
+              ),
+            ),
           );
         },
       ),

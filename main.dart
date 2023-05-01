@@ -50,7 +50,7 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         theme: ThemeData(primaryColor: Colors.indigo),
         title: 'Flutter Demo',
-        home: const NavigateDummy(),
+        home: const HomePage(),
       ),
     );
   }
