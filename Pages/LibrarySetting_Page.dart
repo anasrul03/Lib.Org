@@ -3,6 +3,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class SettingPage extends StatefulWidget {
   const SettingPage({super.key});
@@ -169,6 +170,7 @@ class _SettingPageState extends State<SettingPage> {
 
   Future signOut() async {
     try {
+      GoogleSignIn().disconnect();
       await FirebaseAuth.instance.signOut();
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         duration: Duration(seconds: 1),
@@ -176,6 +178,17 @@ class _SettingPageState extends State<SettingPage> {
         backgroundColor: Colors.grey,
       ));
     } on FirebaseAuthException catch (e) {
-    } catch (e) {}
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        duration: Duration(seconds: 6),
+        content: Text("Firebase Error: $e"),
+        backgroundColor: Colors.red,
+      ));
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        duration: Duration(seconds: 6),
+        content: Text("Error: $e"),
+        backgroundColor: Colors.red,
+      ));
+    }
   }
 }

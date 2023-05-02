@@ -6,11 +6,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lib_org/Components/navigationDummy.dart';
 import 'package:lib_org/Firebase_Auth/Login_Page.dart';
-import 'package:lib_org/Pages/Home_Page.dart';
-import 'package:lib_org/Services/ApiServices/ApiBookDetails.dart';
+import 'package:lib_org/Pages/BookDetails_Page.dart';
 import 'package:lib_org/Services/ApiStates/ApiDetailsStates.dart';
+import 'package:lib_org/Pages/Home_Page.dart';
 import 'package:lib_org/Services/ApiStates/ApiListStates.dart';
 import 'package:lib_org/Services/Firebase_Auth.dart';
+import 'package:lib_org/cubit/auth_cubit.dart';
+import 'package:lib_org/cubit/signup_cubit.dart';
 import 'package:lib_org/firebase_options.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -28,29 +30,43 @@ Future main() async {
 
 final navigatorKey = GlobalKey<NavigatorState>();
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(
-          create: (BuildContext context) {
-            return BookListCubit();
-          },
+    return RepositoryProvider(
+      create: (context) => AuthRepo(),
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (BuildContext context) {
+              return BookListCubit();
+            },
+          ),
+          BlocProvider(
+            create: (BuildContext context) {
+              return SignupCubit(authRepo: context.read<AuthRepo>());
+            },
+          ),
+          BlocProvider(
+            create: (BuildContext context) {
+              return BookDetailsCubit();
+            },
+          ),
+        ],
+        child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(primaryColor: Colors.indigo),
+          title: 'Flutter Demo',
+          home: const HomePage(),
         ),
-        BlocProvider(
-          create: (BuildContext context) {
-            return BookDetailsCubit();
-          },
-        ),
-      ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(primaryColor: Colors.indigo),
-        title: 'Flutter Demo',
-        home: const HomePage(),
       ),
     );
   }
